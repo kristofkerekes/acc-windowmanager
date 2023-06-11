@@ -138,6 +138,7 @@ namespace ACCWindowManager {
 
 			Task.Delay(10000).ContinueWith(_ => {
 				OnApplyClicked();
+				FeedbackMessage = "";
 			});
 		}
 
@@ -147,6 +148,7 @@ namespace ACCWindowManager {
 
 			Task.Delay(10000).ContinueWith(_ => {
 				OnApplyClicked();
+				FeedbackMessage = "";
 			});
 		}
 	}

@@ -51,6 +51,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="TrayIcon, Version=1.0.7.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\TrayIcon.1.0.7.2\lib\net48\TrayIcon.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

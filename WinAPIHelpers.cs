@@ -45,22 +45,13 @@ namespace WinAPIHelpers {
 		public static extern bool EnumThreadWindows(int dwThreadId, EnumWindowsProc lpfn, IntPtr lParam);
 
 		[DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
-		public static extern bool EnumChildWindows(int hWndParent, EnumWindowsProc lpEnumFunc, IntPtr lParam);
-
-		[DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
 		public static extern int GetWindowText(int hWnd, StringBuilder lpString, int nMaxCount);
-
-		[DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
-		public static extern uint RealGetWindowClass(int hwnd, StringBuilder pszType, int cchType);
 
 		[DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
 		public static extern bool IsWindow(int hWnd);
 
 		[DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
 		public static extern bool GetWindowInfo(int hwnd, ref WINDOWINFO pwi);
-
-		[DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
-		public static extern int GetWindowLong(int hWnd, int nIndex);
 
 		[DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
 		public static extern int SetWindowLong(int hWnd, int nIndex, uint dwNewLong);
@@ -70,9 +61,6 @@ namespace WinAPIHelpers {
 
 		[DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
 		public static extern bool IsIconic(int hWnd);
-
-		[DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
-		public static extern bool IsZoomed(int hWnd);
 
 		[DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
 		public static extern bool ShowWindow(int hWnd, int nCmdShow);

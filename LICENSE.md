@@ -1,6 +1,7 @@
 MIT License
 
 Copyright (c) 2023 Kristof Kerekes
+
 Copyright (c) 2016 dtgDTGdtg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

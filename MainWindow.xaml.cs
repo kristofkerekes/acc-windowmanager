@@ -1,4 +1,5 @@
 ﻿using ACCData;
+using NullSoftware.ToolKit;
 using ProcessHelpers;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -161,12 +162,51 @@ namespace ACCWindowManager {
 			InitializeComponent();
 		}
 
+		private void MinimizeToTray() {
+			WindowState = WindowState.Minimized;
+			ShowInTaskbar = false;
+		}
+
+		private void MaximizeFromTray() {
+			ShowInTaskbar = true;
+			WindowState = WindowState.Normal;
+			Activate();
+		}
+
 		private void OnApplyClicked(object sender, System.Windows.RoutedEventArgs e) {
 			ViewModel.OnApplyClicked();
 		}
 
 		private void OnLaunchClicked(object sender, System.Windows.RoutedEventArgs e) {
 			ViewModel.OnLaunchClicked();
+		}
+
+		private void TrayIconDoubleClicked(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+			MaximizeFromTray();
+		}
+
+		private void OnOpenRequested(object sender, RoutedEventArgs e) {
+			MaximizeFromTray();
+		}
+
+		private void OnExitRequested(object sender, RoutedEventArgs e) {
+			Application.Current.Shutdown();
+		}
+
+		private void OnWindowClosing(object sender, CancelEventArgs e) {
+			e.Cancel = true;
+			MinimizeToTray();
+		}
+
+		private void OnWindowStateChanged(object sender, System.EventArgs e) {
+			switch (WindowState) {
+				case WindowState.Minimized:
+					MinimizeToTray();
+					break;
+				case WindowState.Maximized:
+				case WindowState.Normal:
+					break;
+			}
 		}
 	}
 }

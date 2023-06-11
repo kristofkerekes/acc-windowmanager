@@ -3,8 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:icon="https://github.com/nullsoftware/TrayIcon"
         mc:Ignorable="d"
-        Title="ACC Window Manager" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize">
+        Title="ACC Window Manager" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize"
+		Closing="OnWindowClosing"
+		StateChanged="OnWindowStateChanged">
 	<Window.Resources>
 		<Style TargetType="TextBlock">
 			<Style.Triggers>
@@ -17,7 +20,22 @@
 			</Style.Triggers>
 		</Style>
 	</Window.Resources>
-    <StackPanel HorizontalAlignment="Left"
+
+	<icon:TrayIconHandlers.TrayIcons>
+		<icon:TrayIcon Title="ACC Window Manager"
+                       IconSource="app.ico"
+                       MouseDoubleClick="TrayIconDoubleClicked"
+                       NotificationServiceMemberPath="NotificationService">
+			<icon:TrayIcon.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Open" Click="OnOpenRequested"/>
+					<MenuItem Header="Exit" Click="OnExitRequested"/>
+				</ContextMenu>
+			</icon:TrayIcon.ContextMenu>
+		</icon:TrayIcon>
+	</icon:TrayIconHandlers.TrayIcons>
+
+	<StackPanel HorizontalAlignment="Left"
 				Margin="8,8,8,8">
 		<TextBlock FontWeight="Bold" HorizontalAlignment="Left">Available Settings:</TextBlock>
 		<ComboBox Margin="0,0,0,8" Width="250"

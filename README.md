@@ -43,3 +43,8 @@ Whether you started Window Manager or Assetto Corsa Competizione first, Window M
  # Future ideas
 * Launching Steam instead of erroring-out
 * Extend support to more presets
+
+# Credits
+
+WPF Tray Icon Library - [nullsoftware/TrayIcon](https://github.com/nullsoftware/TrayIcon) - Enabling easy creation of a tray icon even with WPF bases
+SRWE - [dtgDTGdtg/SRWE](https://github.com/dtgDTGdtg/SRWE) - Inspiration for workflow and basics and still widely used in the community 

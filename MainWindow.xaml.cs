@@ -1,5 +1,4 @@
 ﻿using ACCData;
-using NullSoftware.ToolKit;
 using ProcessHelpers;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -165,12 +164,18 @@ namespace ACCWindowManager {
 		private void MinimizeToTray() {
 			WindowState = WindowState.Minimized;
 			ShowInTaskbar = false;
+
+			Properties.Settings.Default.WasOnTray = true;
+			App.SettingsSaveRequested();
 		}
 
 		private void MaximizeFromTray() {
 			ShowInTaskbar = true;
 			WindowState = WindowState.Normal;
 			Activate();
+
+			Properties.Settings.Default.WasOnTray = false;
+			App.SettingsSaveRequested();
 		}
 
 		private void OnApplyClicked(object sender, System.Windows.RoutedEventArgs e) {
@@ -193,11 +198,6 @@ namespace ACCWindowManager {
 			Application.Current.Shutdown();
 		}
 
-		private void OnWindowClosing(object sender, CancelEventArgs e) {
-			e.Cancel = true;
-			MinimizeToTray();
-		}
-
 		private void OnWindowStateChanged(object sender, System.EventArgs e) {
 			switch (WindowState) {
 				case WindowState.Minimized:
@@ -206,6 +206,12 @@ namespace ACCWindowManager {
 				case WindowState.Maximized:
 				case WindowState.Normal:
 					break;
+			}
+		}
+
+		private void OnWindowLoaded(object sender, System.EventArgs e) {
+			if (Properties.Settings.Default.WasOnTray) {
+				MinimizeToTray();
 			}
 		}
 	}

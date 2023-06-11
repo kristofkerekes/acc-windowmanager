@@ -6,8 +6,8 @@
 		xmlns:icon="https://github.com/nullsoftware/TrayIcon"
         mc:Ignorable="d"
         Title="ACC Window Manager" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize"
-		Closing="OnWindowClosing"
-		StateChanged="OnWindowStateChanged">
+		StateChanged="OnWindowStateChanged"
+		ContentRendered="OnWindowLoaded">
 	<Window.Resources>
 		<Style TargetType="TextBlock">
 			<Style.Triggers>

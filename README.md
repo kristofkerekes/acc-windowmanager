@@ -20,6 +20,12 @@ Feel free to [Open issues](https://github.com/kristofkerekes/acc-windowmanager/i
 
 The Offset Left/Right settings are aimed at users with more output devices or setups with primary monitors not chosen as the monitor in the middle. Experiment with these settings if you want to offset the position of the Assetto Corsa Competizione window by a monitor to the left or right. This is aimed to eliminate the fiddling with ***Win Key + Arrow*** combinations upon starting the game.
 
+## Custom Resolution settings
+
+You can set up your own custom resolution and offset settings to support your choice of monitor and resolution combinations.
+
+![image](https://github.com/kristofkerekes/acc-windowmanager/assets/89916150/e100d4e4-5c3b-48c3-9423-8ba8b0311a0a)
+
 ## Launch Assetto Corsa Competizione from Window Manager
 
 If you managed to resize the window of Assetto Corsa Competizione successfully on a previous occasion, Window Manager will remember the location of your game and be able to launch and resize it via a push of a single button. If you have Steam running on your computer already, it only takes a single click of a button to enjoy your game on all monitors.

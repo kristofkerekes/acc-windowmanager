@@ -35,7 +35,16 @@ namespace ACCWindowManager {
 			}
 		}
 
-		public ACCWindowController(App app) {
+		private string GamePath {
+			get { return m_gamePath; }
+			set {
+				m_gamePath = value;
+				Properties.Settings.Default.GamePath = m_gamePath;
+				App.SettingsSaveRequested();
+			}
+		}
+
+		public ACCWindowController() {
 			m_gamePath = Properties.Settings.Default.GamePath;
 
 			m_settings = ACCData.DefaultWindowSettings.AllSettings.ToList();
@@ -46,12 +55,21 @@ namespace ACCWindowManager {
 			}
 			m_selectedWindowProperties = (KeyValuePair<string, WindowProperties>)selectedProperty;
 
-			app.ACCProcessDetected += OnACCDetected;
+			m_winEventDelegate = new WinAPIHelpers.WinAPI.WinEventDelegate(WinEventProc);
+			WinAPIHelpers.WinAPI.SetWinEventHook(WinAPIHelpers.WinAPI.EVENT_SYSTEM_FOREGROUND,
+												 WinAPIHelpers.WinAPI.EVENT_SYSTEM_FOREGROUND,
+												 IntPtr.Zero,
+												 m_winEventDelegate,
+												 0,
+												 0,
+												 WinAPIHelpers.WinAPI.EVENT_OUTOFCONTEXT);
 		}
 
 		public void Initialize() {
 			var accProcess = Process.FindProcess(ACCData.ProcessInfo.AppName);
 			if (accProcess != null) {
+				GamePath = accProcess.MainModule.FileName;
+
 				ACCDetected?.Invoke();
 				ResizeACCWindow();
 			}
@@ -65,16 +83,17 @@ namespace ACCWindowManager {
 
 			var accProcess = Process.FindProcess(ACCData.ProcessInfo.AppName);
 			if (accProcess != null) {
+				GamePath = accProcess.MainModule.FileName;
 				return ErrorCode.ACCAlreadyRunning;
 			}
 
-			if (m_gamePath.Length == 0) {
+			if (GamePath.Length == 0) {
 				return ErrorCode.ACCPathNotRegistered;
 			}
 
 			accProcess = new System.Diagnostics.Process();
-			accProcess.StartInfo.FileName = m_gamePath;
-			accProcess.StartInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(m_gamePath);
+			accProcess.StartInfo.FileName = GamePath;
+			accProcess.StartInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(GamePath);
 			accProcess.Start();
 
 			Task.Delay(10000).ContinueWith(_ => ResizeACCWindow());
@@ -83,39 +102,74 @@ namespace ACCWindowManager {
 		}
 
 		public ErrorCode ResizeACCWindow() {
+			Window accMainWindow;
+			var errorCode = GetACCWindow(out accMainWindow);
+			if (errorCode != ErrorCode.NoError) {
+				return errorCode;
+			}
+
+			ResizeACCWindow(accMainWindow);
+			return ErrorCode.NoError;
+		}
+
+		private ErrorCode GetACCWindow(out Window mainWindow) {
+			mainWindow = null;
+
 			var accProcess = Process.FindProcess(ACCData.ProcessInfo.AppName);
 			if (accProcess == null) {
 				return ErrorCode.ACCIsNotRunning;
 			}
+
+			GamePath = accProcess.MainModule.FileName;
 
 			var accWindows = WinAPIHelpers.WindowFinder.GetProcessWindows(accProcess);
 			if (accWindows == null) {
 				return ErrorCode.ACCIsNotRunning;
 			}
 
-			var mainWindow = accWindows.FirstOrDefault(w => w.Name.Contains(ACCData.ProcessInfo.MainWindowName));
+			mainWindow = accWindows.FirstOrDefault(w => w.Name.Contains(ACCData.ProcessInfo.MainWindowName));
 			if (mainWindow == null) {
 				return ErrorCode.ACCMainWindowNotFound;
 			}
 
-			WindowManager.ApplyChanges(mainWindow, m_selectedWindowProperties.Value);
-			ACCResized?.Invoke();
-
-			Properties.Settings.Default.SelectedProperty = m_selectedWindowProperties.Key;
-			Properties.Settings.Default.GamePath = accProcess.MainModule.FileName;
-			App.SettingsSaveRequested();
-
 			return ErrorCode.NoError;
 		}
 
+		private void ResizeACCWindow(Window mainWindow) {
+			if (!mainWindow.WindowInfo.ToProperties().Equals(m_selectedWindowProperties.Value)) {
+				WindowManager.ApplyChanges(mainWindow, m_selectedWindowProperties.Value);
+			}
+			ACCResized?.Invoke();
+
+			Properties.Settings.Default.SelectedProperty = m_selectedWindowProperties.Key;
+			App.SettingsSaveRequested();
+		}
+
 		public void OnACCDetected() {
-			ACCDetected?.Invoke();
-			Task.Delay(10000).ContinueWith(_ => ResizeACCWindow());
+			Window accMainWindow;
+			var errorCode = GetACCWindow(out accMainWindow);
+			if (errorCode != ErrorCode.NoError) {
+				return;
+			}
+
+			if (!accMainWindow.WindowInfo.ToProperties().Equals(m_selectedWindowProperties.Value)) {
+				ACCDetected?.Invoke();
+				Task.Delay(10000).ContinueWith(_ => ResizeACCWindow(accMainWindow));
+			}
 		}
 
 		private List<KeyValuePair<string, WindowProperties>> m_settings;
 		private KeyValuePair<string, WindowProperties> m_selectedWindowProperties;
 		private string m_gamePath = "";
+
+		public void WinEventProc(IntPtr hWinEventHook, int eventType, int hWnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime) {
+			string activeWindowTitle = WinAPIHelpers.WindowFinder.GetActiveWindowTitle();
+			if (activeWindowTitle != null && activeWindowTitle.Contains(ACCData.ProcessInfo.AppName)) {
+				OnACCDetected();
+			}
+		}
+
+		WinAPIHelpers.WinAPI.WinEventDelegate m_winEventDelegate;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		private void OnPropertyChanged(string propertyName) {

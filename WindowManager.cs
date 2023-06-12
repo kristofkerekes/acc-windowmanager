@@ -13,6 +13,10 @@ namespace ACCWindowManager {
 		public uint ExStyle { get; set; }
 
 		public WindowProperties() { }
+
+		public bool Equals(WindowProperties other) {
+			return PosX == other.PosX && PosY == other.PosY && Width == other.Width && Height == other.Height && Style == other.Style && ExStyle == other.ExStyle;
+		}
 	}
 
 	public class Window {
@@ -36,24 +40,36 @@ namespace ACCWindowManager {
 	}
 
 	public static class WindowManager {
+		public static WindowProperties ToProperties(this WINDOWINFO windowInfo) {
+			return new WindowProperties() {
+				PosX = windowInfo.rcWindow.left,
+				PosY = windowInfo.rcWindow.top,
+				Width = windowInfo.rcWindow.Width,
+				Height = windowInfo.rcWindow.Height,
+				Style = windowInfo.dwStyle,
+				ExStyle = windowInfo.dwExStyle
+			};
+		}
+
 		public static void ApplyChanges(Window window, WindowProperties properties) {
 			uint uFlags = WinAPI.SWP_NOSIZE | WinAPI.SWP_NOMOVE | WinAPI.SWP_NOZORDER | WinAPI.SWP_NOACTIVATE | WinAPI.SWP_NOOWNERZORDER | WinAPI.SWP_NOSENDCHANGING;
+			var currentProperties = window.WindowInfo.ToProperties();
 
-			if (window.WindowInfo.dwStyle != properties.Style) {
+			if (currentProperties.Style != properties.Style) {
 				WinAPI.SetWindowLong(window.HandleID, WinAPI.GWL_STYLE, properties.Style);
 				uFlags |= WinAPI.SWP_FRAMECHANGED;
 			}
 
-			if (window.WindowInfo.dwExStyle != properties.ExStyle) {
+			if (currentProperties.ExStyle != properties.ExStyle) {
 				WinAPI.SetWindowLong(window.HandleID, WinAPI.GWL_EXSTYLE, properties.ExStyle);
 				uFlags |= WinAPI.SWP_FRAMECHANGED;
 			}
 
-			if (window.WindowInfo.rcWindow.left != properties.PosX || window.WindowInfo.rcWindow.top != properties.PosY) {
+			if (currentProperties.PosX != properties.PosX || currentProperties.PosY != properties.PosY) {
 				uFlags ^= WinAPI.SWP_NOMOVE;
 			}
 
-			if (window.WindowInfo.rcWindow.Height != properties.Height || window.WindowInfo.rcWindow.Width != properties.Width) {
+			if (currentProperties.Height != properties.Height || currentProperties.Width != properties.Width) {
 				uFlags ^= WinAPI.SWP_NOSIZE;
 			}
 

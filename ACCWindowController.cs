@@ -18,6 +18,7 @@ namespace ACCWindowManager {
 
 		public Action ACCDetected;
 		public Action ACCResized;
+		public Action SelectedWindowPropertiesChanged;
 
 		public List<KeyValuePair<string, WindowProperties>> Settings {
 			get { return m_settings; }
@@ -32,6 +33,21 @@ namespace ACCWindowManager {
 			set {
 				m_selectedWindowProperties = value;
 				OnPropertyChanged(nameof(SelectedWindowProperties));
+				SelectedWindowPropertiesChanged?.Invoke();
+
+				Properties.Settings.Default.SelectedProperty = SelectedWindowProperties.Key;
+				App.SettingsSaveRequested();
+			}
+		}
+
+		public KeyValuePair<string, WindowProperties> CustomWindowProperties {
+			get { return m_customWindowProperties; }
+			set {
+				m_customWindowProperties = value;
+				OnPropertyChanged(nameof(CustomWindowProperties));
+
+				Properties.Settings.Default.CustomWindowProperties = CustomWindowProperties.Value;
+				App.SettingsSaveRequested();
 			}
 		}
 
@@ -47,13 +63,20 @@ namespace ACCWindowManager {
 		public ACCWindowController() {
 			m_gamePath = Properties.Settings.Default.GamePath;
 
-			m_settings = ACCData.DefaultWindowSettings.AllSettings.ToList();
+			Settings = ACCData.DefaultWindowSettings.AllSettings.ToList();
 
-			KeyValuePair<string, WindowProperties>? selectedProperty = m_settings.Find(setting => setting.Key == Properties.Settings.Default.SelectedProperty);
-			if (selectedProperty == null) {
-				selectedProperty = m_settings.First();
+			var customProperties = Properties.Settings.Default.CustomWindowProperties;
+			if (customProperties == null) {
+				customProperties = Settings.First().Value;
 			}
-			m_selectedWindowProperties = (KeyValuePair<string, WindowProperties>)selectedProperty;
+			CustomWindowProperties = new KeyValuePair<string, WindowProperties>(ACCData.DefaultWindowSettings.CustomSettingsName, customProperties);
+			Settings.Add(CustomWindowProperties);
+
+			KeyValuePair<string, WindowProperties>? selectedProperty = Settings.Find(setting => setting.Key == Properties.Settings.Default.SelectedProperty);
+			if (selectedProperty == null) {
+				selectedProperty = Settings.First();
+			}
+			SelectedWindowProperties = (KeyValuePair<string, WindowProperties>)selectedProperty;
 
 			m_winEventDelegate = new WinAPIHelpers.WinAPI.WinEventDelegate(WinEventProc);
 			WinAPIHelpers.WinAPI.SetWinEventHook(WinAPIHelpers.WinAPI.EVENT_SYSTEM_FOREGROUND,
@@ -66,7 +89,7 @@ namespace ACCWindowManager {
 		}
 
 		public void Initialize() {
-			Window accMainWindow;         
+			Window accMainWindow;
 			var errorCode = GetACCWindow(out accMainWindow);
 			if (errorCode != ErrorCode.NoError) {
 				return;
@@ -141,9 +164,6 @@ namespace ACCWindowManager {
 				WindowManager.ApplyChanges(mainWindow, m_selectedWindowProperties.Value);
 			}
 			ACCResized?.Invoke();
-
-			Properties.Settings.Default.SelectedProperty = m_selectedWindowProperties.Key;
-			App.SettingsSaveRequested();
 		}
 
 		public void OnACCDetected() {
@@ -161,6 +181,7 @@ namespace ACCWindowManager {
 
 		private List<KeyValuePair<string, WindowProperties>> m_settings;
 		private KeyValuePair<string, WindowProperties> m_selectedWindowProperties;
+		private KeyValuePair<string, WindowProperties> m_customWindowProperties;
 		private string m_gamePath = "";
 
 		public void WinEventProc(IntPtr hWinEventHook, int eventType, int hWnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime) {

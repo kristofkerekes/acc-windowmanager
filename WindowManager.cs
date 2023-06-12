@@ -1,9 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Configuration;
 using System.Text;
 using WinAPIHelpers;
 
 namespace ACCWindowManager {
-	[Serializable]
+	[TypeConverter(typeof(WindowPropertiesConverter))]
+	[SettingsSerializeAs(SettingsSerializeAs.Xml)]
 	public class WindowProperties {
 		public int PosX { get; set; }
 		public int PosY { get; set; }
@@ -16,6 +19,36 @@ namespace ACCWindowManager {
 
 		public bool Equals(WindowProperties other) {
 			return PosX == other.PosX && PosY == other.PosY && Width == other.Width && Height == other.Height && Style == other.Style && ExStyle == other.ExStyle;
+		}
+	}
+
+	public class WindowPropertiesConverter : TypeConverter {
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) {
+			return sourceType == typeof(string);
+		}
+
+		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) {
+			if (value is string) {
+				string[] parts = ((string)value).Split(new char[] { ',' });
+				WindowProperties properties = new WindowProperties();
+				properties.PosX = Convert.ToInt32(parts[0]);
+				properties.PosY = Convert.ToInt32(parts[1]);
+				properties.Width = Convert.ToInt32(parts[2]);
+				properties.Height = Convert.ToInt32(parts[3]);
+				properties.Style = Convert.ToUInt32(parts[4]);
+				properties.ExStyle = Convert.ToUInt32(parts[5]);
+				return properties;
+			}
+			return base.ConvertFrom(context, culture, value);
+		}
+
+		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture,
+			object value, Type destinationType) {
+			if (destinationType == typeof(string)) {
+				WindowProperties properties = value as WindowProperties;
+				return string.Format("{0},{1},{2},{3},{4},{5}", properties.PosX, properties.PosY, properties.Width, properties.Height, properties.Style, properties.ExStyle);
+			}
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 	}
 

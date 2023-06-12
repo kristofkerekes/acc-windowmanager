@@ -67,6 +67,8 @@ namespace ACCData {
 			ExStyle = DefaultExStyle
 		};
 
+		public static string CustomSettingsName = "Custom Resolution";
+
 		public static Dictionary<string, WindowProperties> AllSettings = new Dictionary<string, WindowProperties> {
 			{ "Triple Monitors - 3x1080p", m_tripleFullHD },
 			{ "Triple Monitors - 3x1440p", m_triple4k },

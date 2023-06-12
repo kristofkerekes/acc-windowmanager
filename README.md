@@ -48,7 +48,7 @@ Whether you started Window Manager or Assetto Corsa Competizione first, Window M
  
  # Future ideas
 * Launching Steam instead of erroring-out
-* Extend support to more presets
+* Memory optimizations
 
 # Credits
 

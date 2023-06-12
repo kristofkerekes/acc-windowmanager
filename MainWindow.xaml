@@ -39,9 +39,9 @@
 				Margin="8,8,8,8">
 		<TextBlock FontWeight="Bold" HorizontalAlignment="Left">Available Settings:</TextBlock>
 		<ComboBox Margin="0,0,0,8" Width="250"
-				  ItemsSource="{Binding Path=Settings}"
+				  ItemsSource="{Binding Path=WindowController.Settings}"
 				  DisplayMemberPath="Key"
-				  SelectedValue="{Binding Path=SelectedWindowProperties}" HorizontalAlignment="Left"/>
+				  SelectedValue="{Binding Path=WindowController.SelectedWindowProperties}" HorizontalAlignment="Left"/>
 		<StackPanel Margin="0,0,0,8" Orientation="Horizontal" HorizontalAlignment="Left">
 			<Button Padding="4,4,4,4" HorizontalAlignment="Left" Click="OnApplyClicked">Apply</Button>
 			<Button Margin="8,0,0,0" Padding="4,4,4,4" HorizontalAlignment="Left" Click="OnLaunchClicked">Launch and Resize ACC</Button>

@@ -6,8 +6,8 @@ namespace ACCWindowManager {
 		public Action ACCProcessDetected;
 
 		public App() {
-			var mainWindowVM = new MainWindowViewModel();
-			m_mainWindow = new MainWindow(mainWindowVM);
+			m_windowController = new ACCWindowController(this);
+			m_mainWindow = new MainWindow(new MainWindowViewModel(m_windowController));
 
 			m_winEventDelegate = new WinAPIHelpers.WinAPI.WinEventDelegate(WinEventProc);
 			WinAPIHelpers.WinAPI.SetWinEventHook(WinAPIHelpers.WinAPI.EVENT_SYSTEM_FOREGROUND,
@@ -20,6 +20,8 @@ namespace ACCWindowManager {
 
 			MainWindow = m_mainWindow;
 			MainWindow.Show();
+
+			m_windowController.Initialize();
 		}
 
 		public static void SettingsSaveRequested() {
@@ -37,7 +39,9 @@ namespace ACCWindowManager {
 			}
 		}
 
-		WinAPIHelpers.WinAPI.WinEventDelegate m_winEventDelegate;
 		MainWindow m_mainWindow;
+		ACCWindowController m_windowController;
+
+		WinAPIHelpers.WinAPI.WinEventDelegate m_winEventDelegate;
 	}
 }

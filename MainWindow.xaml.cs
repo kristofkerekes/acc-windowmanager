@@ -1,39 +1,9 @@
-﻿using ACCData;
-using ProcessHelpers;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows;
 
 namespace ACCWindowManager {
 	public class MainWindowViewModel : INotifyPropertyChanged {
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public List<KeyValuePair<string, WindowProperties>> Settings {
-			get { return m_settings; }
-			set {
-				m_settings = value;
-				OnPropertyChanged(nameof(Settings));
-			}
-		}
-
-		public KeyValuePair<string, WindowProperties> SelectedWindowProperties {
-			get { return m_selectedWindowProperties; }
-			set {
-				m_selectedWindowProperties = value;
-				OnPropertyChanged(nameof(SelectedWindowProperties));
-			}
-		}
-
-		public string GamePath {
-			get { return m_gamePath; }
-			set {
-				m_gamePath = value;
-				OnPropertyChanged(nameof(GamePath));
-			}
-		}
-
+		public ACCWindowController WindowController { get; }
 		public string ErrorMessage {
 			get { return m_errorMessage; }
 			set {
@@ -50,106 +20,74 @@ namespace ACCWindowManager {
 			}
 		}
 
-		public MainWindowViewModel() {
-			Settings = new DefaultWindowSettings().AllSettings.ToList();
+		public MainWindowViewModel(ACCWindowController windowController) {
+			WindowController = windowController;
 
-			KeyValuePair<string, WindowProperties>? selectedProperty = Settings.Find(setting => setting.Key == Properties.Settings.Default.SelectedProperty);
-			if (selectedProperty == null) {
-				selectedProperty = Settings.First();
-			}
-			SelectedWindowProperties = (KeyValuePair<string, WindowProperties>)selectedProperty;
-
-			GamePath = Properties.Settings.Default.GamePath;
-
-			((App)Application.Current).ACCProcessDetected += OnACCDetected;
-
-			var accProcess = Process.FindProcess(ACCData.ProcessInfo.AppName);
-			if (accProcess != null) {
-				OnACCDetected();
-			}
+			WindowController.ACCDetected += OnACCDetected;
+			WindowController.ACCResized += OnACCResized;
 		}
 
-		private void OnPropertyChanged(string propertyName) {
-			if (PropertyChanged != null) {
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
+		~MainWindowViewModel() {
+			WindowController.ACCDetected -= OnACCDetected;
+			WindowController.ACCResized -= OnACCResized;
 		}
 
-		private List<KeyValuePair<string, WindowProperties>> m_settings;
-		private KeyValuePair<string, WindowProperties> m_selectedWindowProperties;
-		private string m_gamePath = "";
 		private string m_errorMessage = "";
 		private string m_feedbackMessage = "";
 
+		private void HandleError(ACCWindowController.ErrorCode errorCode) {
+			switch (errorCode) {
+				case ACCWindowController.ErrorCode.NoError:
+					ErrorMessage = "";
+					break;
+				case ACCWindowController.ErrorCode.SteamNotFound:
+					ErrorMessage = "Steam is not running.";
+					break;
+				case ACCWindowController.ErrorCode.ACCAlreadyRunning:
+					ErrorMessage = "Assetto Corsa Competizione is already running.";
+					break;
+				case ACCWindowController.ErrorCode.ACCPathNotRegistered:
+					ErrorMessage = "Assetto Corsa Competizione path not registered. Launch manually!";
+					break;
+				case ACCWindowController.ErrorCode.ACCIsNotRunning:
+					ErrorMessage = "Assetto Corsa Competizione is not running.";
+					break;
+				case ACCWindowController.ErrorCode.ACCMainWindowNotFound:
+					ErrorMessage = "Assetto Corsa Competizione main window was not found.";
+					break;
+			}
+		}
+
 		public void OnApplyClicked() {
-			ErrorMessage = "";
-
-			var accProcess = Process.FindProcess(ACCData.ProcessInfo.AppName);
-			if (accProcess == null) {
-				ErrorMessage = "Assetto Corsa Competizione is not running.";
-				return;
-			}
-
-			var accWindows = WinAPIHelpers.WindowFinder.GetProcessWindows(accProcess);
-			if (accWindows == null) {
-				ErrorMessage = "Assetto Corsa Competizione is not running.";
-				return;
-			}
-
-			var mainWindow = accWindows.FirstOrDefault(w => w.Name.Contains(ACCData.ProcessInfo.MainWindowName));
-			if (mainWindow == null) {
-				ErrorMessage = "Assetto Corsa Competizione main window was not found.";
-				return;
-			}
-
-			WindowManager.ApplyChanges(mainWindow, m_selectedWindowProperties.Value);
-
-			Properties.Settings.Default.SelectedProperty = m_selectedWindowProperties.Key;
-			Properties.Settings.Default.GamePath = accProcess.MainModule.FileName;
-			App.SettingsSaveRequested();
+			var errorCode = WindowController.ResizeACCWindow();
+			HandleError(errorCode);
 		}
 
 		public void OnLaunchClicked() {
-			ErrorMessage = "";
-
-			var steamProcess = Process.FindProcess(ACCData.ProcessInfo.SteamAppName);
-			if (steamProcess == null) {
-				ErrorMessage = "Steam is not running.";
+			var errorCode = WindowController.LaunchACC();
+			HandleError(errorCode);
+			if (errorCode != ACCWindowController.ErrorCode.NoError) {
 				return;
 			}
 
-			var accProcess = Process.FindProcess(ACCData.ProcessInfo.AppName);
-			if (accProcess != null) {
-				ErrorMessage = "Assetto Corsa Competizione is already running.";
-				return;
-			}
-
-			if (m_gamePath.Length == 0) {
-				ErrorMessage = "Assetto Corsa Competizione path not registered. Launch manually!";
-				return;
-			}
-
-			accProcess = new System.Diagnostics.Process();
-			accProcess.StartInfo.FileName = m_gamePath;
-			accProcess.StartInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(m_gamePath);
-			accProcess.Start();
-
-			FeedbackMessage = "Launched Assetto Corsa Competizione. Automatic Resizing.";
-
-			Task.Delay(10000).ContinueWith(_ => {
-				OnApplyClicked();
-				FeedbackMessage = "";
-			});
+			FeedbackMessage = "Launched Assetto Corsa Competizione, automatic resizing.";
 		}
 
 		private void OnACCDetected() {
 			ErrorMessage = "";
-			FeedbackMessage = "Detected Assetto Corsa Competizione. Automatic Resizing.";
+			FeedbackMessage = "Detected Assetto Corsa Competizione, automatic resizing.";
+		}
 
-			Task.Delay(10000).ContinueWith(_ => {
-				OnApplyClicked();
-				FeedbackMessage = "";
-			});
+		private void OnACCResized() {
+			ErrorMessage = "";
+			FeedbackMessage = "";
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void OnPropertyChanged(string propertyName) {
+			if (PropertyChanged != null) {
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 

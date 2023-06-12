@@ -9,7 +9,7 @@ namespace ACCData {
 		public static string SteamAppName = "steam";
 	}
 
-	public class DefaultWindowSettings {
+	public static class DefaultWindowSettings {
 		private static uint DefaultStyle = 0x140B0000;
 		private static uint DefaultExStyle = 0x20040800;
 
@@ -67,7 +67,7 @@ namespace ACCData {
 			ExStyle = DefaultExStyle
 		};
 
-		public Dictionary<string, WindowProperties> AllSettings = new Dictionary<string, WindowProperties> {
+		public static Dictionary<string, WindowProperties> AllSettings = new Dictionary<string, WindowProperties> {
 			{ "Triple Monitors - 3x1080p", m_tripleFullHD },
 			{ "Triple Monitors - 3x1440p", m_triple4k },
 			{ "Triple Monitors - 3x1080p (Offset Left)", m_tripleFullHDOffsetLeft },

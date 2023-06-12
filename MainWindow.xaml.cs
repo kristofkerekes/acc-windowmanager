@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 
 namespace ACCWindowManager {
-	internal class MainWindowViewModel : INotifyPropertyChanged {
+	public class MainWindowViewModel : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public List<KeyValuePair<string, WindowProperties>> Settings {
@@ -134,7 +134,7 @@ namespace ACCWindowManager {
 			accProcess.StartInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(m_gamePath);
 			accProcess.Start();
 
-			FeedbackMessage = "Detected Assetto Corsa Competizione. Automatic Resizing.";
+			FeedbackMessage = "Launched Assetto Corsa Competizione. Automatic Resizing.";
 
 			Task.Delay(10000).ContinueWith(_ => {
 				OnApplyClicked();
@@ -154,9 +154,10 @@ namespace ACCWindowManager {
 	}
 
 	public partial class MainWindow : System.Windows.Window {
-		private MainWindowViewModel ViewModel = new MainWindowViewModel();
+		private MainWindowViewModel ViewModel;
 
-		public MainWindow() {
+		public MainWindow(MainWindowViewModel vm) {
+			ViewModel = vm;
 			DataContext = ViewModel;
 			InitializeComponent();
 		}

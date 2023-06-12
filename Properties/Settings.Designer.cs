@@ -49,13 +49,23 @@ namespace ACCWindowManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool WasOnTray {
             get {
                 return ((bool)(this["WasOnTray"]));
             }
             set {
                 this["WasOnTray"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ACCWindowManager.WindowProperties CustomWindowProperties {
+            get {
+                return ((global::ACCWindowManager.WindowProperties)(this["CustomWindowProperties"]));
+            }
+            set {
+                this["CustomWindowProperties"] = value;
             }
         }
     }

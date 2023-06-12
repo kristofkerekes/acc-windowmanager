@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 
 namespace ACCData {
-    public static class ProcessInfo {
+	public static class ProcessInfo {
 		public static string AppName = "AC2";
 		public static string MainWindowName = "AC2";
 
 		public static string SteamAppName = "steam";
-    }
+	}
 
-    public class DefaultWindowSettings {
+	public class DefaultWindowSettings {
 		private static uint DefaultStyle = 0x140B0000;
 		private static uint DefaultExStyle = 0x20040800;
 
@@ -74,6 +74,6 @@ namespace ACCData {
 			{ "Triple Monitors - 3x1080p (Offset Right)", m_tripleFullHDOffsetRight },
 			{ "Triple Monitors - 3x1440p (Offset Left)", m_triple4kOffsetLeft },
 			{ "Triple Monitors - 3x1440p (Offset Right)", m_triple4kOffsetRight }
-		}; 
-    }
+		};
+	}
 }

@@ -10,11 +10,11 @@ namespace ACCWindowManager {
 	internal class MainWindowViewModel : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public List<KeyValuePair<string, WindowProperties>> DefaultSettings {
-			get { return m_defaultSettings; }
+		public List<KeyValuePair<string, WindowProperties>> Settings {
+			get { return m_settings; }
 			set {
-				m_defaultSettings = value;
-				OnPropertyChanged(nameof(DefaultSettings));
+				m_settings = value;
+				OnPropertyChanged(nameof(Settings));
 			}
 		}
 
@@ -51,11 +51,11 @@ namespace ACCWindowManager {
 		}
 
 		public MainWindowViewModel() {
-			DefaultSettings = new DefaultWindowSettings().AllSettings.ToList();
+			Settings = new DefaultWindowSettings().AllSettings.ToList();
 
-			KeyValuePair<string, WindowProperties>? selectedProperty = DefaultSettings.Find(setting => setting.Key == Properties.Settings.Default.SelectedProperty);
+			KeyValuePair<string, WindowProperties>? selectedProperty = Settings.Find(setting => setting.Key == Properties.Settings.Default.SelectedProperty);
 			if (selectedProperty == null) {
-				selectedProperty = DefaultSettings.First();
+				selectedProperty = Settings.First();
 			}
 			SelectedWindowProperties = (KeyValuePair<string, WindowProperties>)selectedProperty;
 
@@ -75,7 +75,7 @@ namespace ACCWindowManager {
 			}
 		}
 
-		private List<KeyValuePair<string, WindowProperties>> m_defaultSettings;
+		private List<KeyValuePair<string, WindowProperties>> m_settings;
 		private KeyValuePair<string, WindowProperties> m_selectedWindowProperties;
 		private string m_gamePath = "";
 		private string m_errorMessage = "";

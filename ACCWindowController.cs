@@ -66,13 +66,14 @@ namespace ACCWindowManager {
 		}
 
 		public void Initialize() {
-			var accProcess = Process.FindProcess(ACCData.ProcessInfo.AppName);
-			if (accProcess != null) {
-				GamePath = accProcess.MainModule.FileName;
-
-				ACCDetected?.Invoke();
-				ResizeACCWindow();
+			Window accMainWindow;         
+			var errorCode = GetACCWindow(out accMainWindow);
+			if (errorCode != ErrorCode.NoError) {
+				return;
 			}
+
+			ACCDetected?.Invoke();
+			ResizeACCWindow();
 		}
 
 		public ErrorCode LaunchACC() {

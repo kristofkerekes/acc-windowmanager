@@ -1,14 +1,18 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using WinAPIHelpers;
 
 namespace ACCWindowManager {
-	public struct WindowProperties {
-		public int PosX;
-		public int PosY;
-		public int Width;
-		public int Height;
-		public uint Style;
-		public uint ExStyle;
+	[Serializable]
+	public class WindowProperties {
+		public int PosX { get; set; }
+		public int PosY { get; set; }
+		public int Width { get; set; }
+		public int Height { get; set; }
+		public uint Style { get; set; }
+		public uint ExStyle { get; set; }
+
+		public WindowProperties() { }
 	}
 
 	public class Window {

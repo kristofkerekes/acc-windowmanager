@@ -11,5 +11,8 @@
     <Setting Name="WasOnTray" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="CustomWindowProperties" Type="ACCWindowManager.WindowProperties" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

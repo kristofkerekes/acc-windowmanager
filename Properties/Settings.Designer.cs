@@ -58,5 +58,16 @@ namespace ACCWindowManager.Properties {
                 this["WasOnTray"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ACCWindowManager.WindowProperties CustomWindowProperties {
+            get {
+                return ((global::ACCWindowManager.WindowProperties)(this["CustomWindowProperties"]));
+            }
+            set {
+                this["CustomWindowProperties"] = value;
+            }
+        }
     }
 }

@@ -3,6 +3,8 @@
 namespace ACCWindowManager {
 	public partial class App : Application {
 		public App() {
+			ACCWindowManager.Properties.Settings.Default.SettingChanging += (o, e) => SettingsSaveRequested();
+
 			m_windowController = new ACCWindowController();
 
 			m_TrayIconWindow = new TrayIconWindow();
@@ -31,7 +33,6 @@ namespace ACCWindowManager {
 			m_mainWindow.Activate();
 
 			ACCWindowManager.Properties.Settings.Default.WasOnTray = false;
-			SettingsSaveRequested();
 		}
 
 		private void OnExitRequested() {
@@ -42,10 +43,9 @@ namespace ACCWindowManager {
 			m_mainWindow = null;
 
 			ACCWindowManager.Properties.Settings.Default.WasOnTray = true;
-			SettingsSaveRequested();
 		}
 
-		public static void SettingsSaveRequested() {
+		private static void SettingsSaveRequested() {
 			ACCWindowManager.Properties.Settings.Default.Save();
 		}
 

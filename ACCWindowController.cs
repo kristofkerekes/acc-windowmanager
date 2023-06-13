@@ -36,7 +36,6 @@ namespace ACCWindowManager {
 				SelectedWindowPropertiesChanged?.Invoke();
 
 				Properties.Settings.Default.SelectedProperty = SelectedWindowProperties.Key;
-				App.SettingsSaveRequested();
 			}
 		}
 
@@ -47,7 +46,6 @@ namespace ACCWindowManager {
 				OnPropertyChanged(nameof(CustomWindowProperties));
 
 				Properties.Settings.Default.CustomWindowProperties = CustomWindowProperties.Value;
-				App.SettingsSaveRequested();
 			}
 		}
 
@@ -56,7 +54,6 @@ namespace ACCWindowManager {
 			set {
 				m_gamePath = value;
 				Properties.Settings.Default.GamePath = m_gamePath;
-				App.SettingsSaveRequested();
 			}
 		}
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
@@ -166,29 +167,13 @@ namespace ACCWindowManager {
 	}
 
 	public partial class MainWindow : System.Windows.Window {
+		public Action MinimizeToTrayRequested;
 		private MainWindowViewModel ViewModel;
 
 		public MainWindow(MainWindowViewModel vm) {
 			ViewModel = vm;
 			DataContext = ViewModel;
 			InitializeComponent();
-		}
-
-		private void MinimizeToTray() {
-			WindowState = WindowState.Minimized;
-			ShowInTaskbar = false;
-
-			Properties.Settings.Default.WasOnTray = true;
-			App.SettingsSaveRequested();
-		}
-
-		private void MaximizeFromTray() {
-			ShowInTaskbar = true;
-			WindowState = WindowState.Normal;
-			Activate();
-
-			Properties.Settings.Default.WasOnTray = false;
-			App.SettingsSaveRequested();
 		}
 
 		private void OnApplyClicked(object sender, System.Windows.RoutedEventArgs e) {
@@ -199,22 +184,11 @@ namespace ACCWindowManager {
 			ViewModel.OnLaunchClicked();
 		}
 
-		private void TrayIconDoubleClicked(object sender, System.Windows.Input.MouseButtonEventArgs e) {
-			MaximizeFromTray();
-		}
-
-		private void OnOpenRequested(object sender, RoutedEventArgs e) {
-			MaximizeFromTray();
-		}
-
-		private void OnExitRequested(object sender, RoutedEventArgs e) {
-			Application.Current.Shutdown();
-		}
-
 		private void OnWindowStateChanged(object sender, System.EventArgs e) {
 			switch (WindowState) {
 				case WindowState.Minimized:
-					MinimizeToTray();
+					Close();
+					MinimizeToTrayRequested?.Invoke();
 					break;
 				case WindowState.Maximized:
 				case WindowState.Normal:
@@ -222,15 +196,13 @@ namespace ACCWindowManager {
 			}
 		}
 
-		private void OnWindowLoaded(object sender, System.EventArgs e) {
-			if (Properties.Settings.Default.WasOnTray) {
-				MinimizeToTray();
-			}
-		}
-
 		private void NumberValidationTextBox(object sender, TextCompositionEventArgs e) {
 			Regex regex = new Regex("[^0-9]+");
 			e.Handled = regex.IsMatch(e.Text);
+		}
+
+		private void OnWindowClosing(object sender, CancelEventArgs e) {
+			MinimizeToTrayRequested?.Invoke();
 		}
 	}
 }

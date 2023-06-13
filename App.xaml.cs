@@ -9,8 +9,8 @@ namespace ACCWindowManager {
 
 			m_TrayIconWindow = new TrayIconWindow();
 			m_TrayIconWindow.OpenRequested += OnOpenRequested;
+			m_TrayIconWindow.LaunchACCRequested += OnLaunchACCRequested;
 			m_TrayIconWindow.ExitRequested += OnExitRequested;
-
 
 			MainWindow = m_TrayIconWindow;
 			if (!ACCWindowManager.Properties.Settings.Default.WasOnTray) {
@@ -33,6 +33,10 @@ namespace ACCWindowManager {
 			m_mainWindow.Activate();
 
 			ACCWindowManager.Properties.Settings.Default.WasOnTray = false;
+		}
+
+		private void OnLaunchACCRequested() {
+			m_windowController.LaunchACC();
 		}
 
 		private void OnExitRequested() {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:icon="https://github.com/nullsoftware/TrayIcon"
         mc:Ignorable="d"
-        Title="TrayIconWindow" Height="0" Width="0"
+        Title="ACC Window Manager" Height="0" Width="0"
 		WindowStyle="None" WindowState="Maximized" AllowsTransparency="True" Background="Transparent" 
 		ShowInTaskbar="False" Visibility="Hidden">
 	<icon:TrayIconHandlers.TrayIcons>
@@ -15,6 +15,7 @@
 			<icon:TrayIcon.ContextMenu>
 				<ContextMenu>
 					<MenuItem Header="Open" Click="OnOpenRequested"/>
+					<MenuItem Header="Launch ACC" Click="OnLaunchACCRequested"/>
 					<MenuItem Header="Exit" Click="OnExitRequested"/>
 				</ContextMenu>
 			</icon:TrayIcon.ContextMenu>

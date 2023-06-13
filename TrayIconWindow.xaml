@@ -1,0 +1,24 @@
+﻿<Window x:Class="ACCWindowManager.TrayIconWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:icon="https://github.com/nullsoftware/TrayIcon"
+        mc:Ignorable="d"
+        Title="TrayIconWindow" Height="0" Width="0"
+		WindowStyle="None" WindowState="Maximized" AllowsTransparency="True" Background="Transparent" 
+		ShowInTaskbar="False" Visibility="Hidden">
+	<icon:TrayIconHandlers.TrayIcons>
+		<icon:TrayIcon Title="ACC Window Manager"
+                       IconSource="app.ico"
+                       MouseDoubleClick="TrayIconDoubleClicked">
+			<icon:TrayIcon.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Open" Click="OnOpenRequested"/>
+					<MenuItem Header="Exit" Click="OnExitRequested"/>
+				</ContextMenu>
+			</icon:TrayIcon.ContextMenu>
+		</icon:TrayIcon>
+	</icon:TrayIconHandlers.TrayIcons>
+	<Grid/>
+</Window>

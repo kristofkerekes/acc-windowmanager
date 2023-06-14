@@ -49,17 +49,7 @@ namespace ACCWindowManager {
 			}
 		}
 
-		private string GamePath {
-			get { return m_gamePath; }
-			set {
-				m_gamePath = value;
-				Properties.Settings.Default.GamePath = m_gamePath;
-			}
-		}
-
 		public ACCWindowController() {
-			m_gamePath = Properties.Settings.Default.GamePath;
-
 			Settings = ACCData.DefaultWindowSettings.AllSettings.ToList();
 
 			var customProperties = Properties.Settings.Default.CustomWindowProperties;
@@ -97,27 +87,15 @@ namespace ACCWindowManager {
 		}
 
 		public ErrorCode LaunchACC() {
-			var steamProcess = Process.FindProcess(ACCData.ProcessInfo.SteamAppName);
-			if (steamProcess == null) {
-				return ErrorCode.SteamNotFound;
-			}
-
 			var accProcess = Process.FindProcess(ACCData.ProcessInfo.AppName);
 			if (accProcess != null) {
-				GamePath = accProcess.MainModule.FileName;
 				return ErrorCode.ACCAlreadyRunning;
 			}
 
-			if (GamePath.Length == 0) {
-				return ErrorCode.ACCPathNotRegistered;
-			}
-
-			accProcess = new System.Diagnostics.Process();
-			accProcess.StartInfo.FileName = GamePath;
-			accProcess.StartInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(GamePath);
-			accProcess.Start();
-
-			Task.Delay(10000).ContinueWith(_ => ResizeACCWindow());
+			var accStarterProcess = new System.Diagnostics.Process();
+			accStarterProcess.StartInfo.FileName = "steam://rungameid/" + ACCData.ProcessInfo.AppID;
+			accStarterProcess.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+			accStarterProcess.Start();
 
 			return ErrorCode.NoError;
 		}
@@ -140,8 +118,6 @@ namespace ACCWindowManager {
 			if (accProcess == null) {
 				return ErrorCode.ACCIsNotRunning;
 			}
-
-			GamePath = accProcess.MainModule.FileName;
 
 			var accWindows = WinAPIHelpers.WindowFinder.GetProcessWindows(accProcess);
 			if (accWindows == null) {
@@ -179,7 +155,6 @@ namespace ACCWindowManager {
 		private List<KeyValuePair<string, WindowProperties>> m_settings;
 		private KeyValuePair<string, WindowProperties> m_selectedWindowProperties;
 		private KeyValuePair<string, WindowProperties> m_customWindowProperties;
-		private string m_gamePath = "";
 
 		public void WinEventProc(IntPtr hWinEventHook, int eventType, int hWnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime) {
 			string activeWindowTitle = WinAPIHelpers.WindowFinder.GetActiveWindowTitle();

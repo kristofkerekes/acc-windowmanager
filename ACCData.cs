@@ -5,8 +5,7 @@ namespace ACCData {
 	public static class ProcessInfo {
 		public static string AppName = "AC2";
 		public static string MainWindowName = "AC2";
-
-		public static string SteamAppName = "steam";
+		public static string AppID = "805550";
 	}
 
 	public static class DefaultWindowSettings {

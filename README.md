@@ -28,7 +28,7 @@ You can set up your own custom resolution and offset settings to support your ch
 
 ## Launch Assetto Corsa Competizione from Window Manager
 
-If you managed to resize the window of Assetto Corsa Competizione successfully on a previous occasion, Window Manager will remember the location of your game and be able to launch and resize it via a push of a single button. If you have Steam running on your computer already, it only takes a single click of a button to enjoy your game on all monitors.
+Window Manager will be able to launch and resize it via a push of a single button, it only takes a single click of a button to enjoy your game on all monitors. You can launch the game from the application window and the Tray icon too.
 
 ![image](https://github.com/kristofkerekes/acc-windowmanager/assets/89916150/89b19b13-3bac-4401-a7a6-48e244ffb76e)
 
@@ -46,10 +46,6 @@ Whether you started Window Manager or Assetto Corsa Competizione first, Window M
  
  ![image](https://github.com/kristofkerekes/acc-windowmanager/assets/89916150/0bde2111-f9f1-459e-8a6b-56c16102d3d5)
  
- # Future ideas
-* Launching Steam instead of erroring-out
-* Memory optimizations
-
 # Credits
 
 * WPF Tray Icon Library - [nullsoftware/TrayIcon](https://github.com/nullsoftware/TrayIcon) - Enabling easy creation of a tray icon even with WPF bases

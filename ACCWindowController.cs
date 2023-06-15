@@ -11,7 +11,6 @@ namespace ACCWindowManager {
 			NoError,
 			SteamNotFound,
 			ACCAlreadyRunning,
-			ACCPathNotRegistered,
 			ACCIsNotRunning,
 			ACCMainWindowNotFound,
 		}

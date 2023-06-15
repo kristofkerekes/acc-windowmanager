@@ -110,9 +110,6 @@ namespace ACCWindowManager {
 				case ACCWindowController.ErrorCode.ACCAlreadyRunning:
 					ErrorMessage = "Assetto Corsa Competizione is already running.";
 					break;
-				case ACCWindowController.ErrorCode.ACCPathNotRegistered:
-					ErrorMessage = "Assetto Corsa Competizione path not registered. Launch manually!";
-					break;
 				case ACCWindowController.ErrorCode.ACCIsNotRunning:
 					ErrorMessage = "Assetto Corsa Competizione is not running.";
 					break;
